@@ -12,10 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Routinator
+      - name: Initialize Routinator
         run: |
           docker pull nlnetlabs/routinator:latest
-          docker run --rm -v $(pwd)/data:/var/lib/routinator nlnetlabs/routinator init --accept-arin-rpa
+          docker run --rm -v $(pwd)/data:/var/lib/routinator nlnetlabs/routinator init
           docker run --rm -d -p 9556:9556 -v $(pwd)/data:/var/lib/routinator nlnetlabs/routinator server --http 0.0.0.0:9556
 
       - name: Fetch VRP Data
@@ -24,7 +24,7 @@ jobs:
           curl -s http://localhost:9556/api/v1/vrps/json > vrps.json
 
       - name: Upload VRP Data
-        uses: actions/upload-artifact@v4  # 使用 v4 替代弃用的 v3
+        uses: actions/upload-artifact@v4
         with:
           name: rpki-vrps
           path: vrps.json
